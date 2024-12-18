@@ -324,7 +324,7 @@ function ViewCommunityList() {
       {/* 전체 ㄱ,ㄴ,ㄷ ... 커뮤니티 개설 요청 */}
       <div>
         {renderButtons()}
-        <RoundButton text={"커뮤니티 개설 요청"} onClick={handleRoundButtonClick} />
+        <RoundButton onClick={handleRoundButtonClick} options={[{value: "", title: "커뮤니티 개설 요청"}]} />
       </div>
       <div>
         {alphabetCommunity(nowAlpha)}

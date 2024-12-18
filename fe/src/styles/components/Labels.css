@@ -39,3 +39,10 @@
 .iconPlusLabel {
   cursor: pointer;
 }
+
+/* 아이콘 라벨 row */
+.iconPlusLabelColumn{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

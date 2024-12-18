@@ -1,0 +1,20 @@
+.historybox {
+  display: flex;
+  border: 1px solid #bebebe;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.historybox_item {
+  flex: 1;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.historybox_item.withBorder {
+  border-right: 1px solid #bebebe; 
+}
+
+.historybox_item:last-child {
+  border-right: none; 
+}

@@ -1,0 +1,66 @@
+/* 프로필 */
+.profile_container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #bebebe;
+  border-radius: 20px;
+  padding: 24px 52px;
+  margin-top: 20px;
+}
+
+.profile_info_section {
+  display: flex;
+}
+
+.profile_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+/* 내 점수, 비드 */
+.rate_container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.rate_items {
+  display: flex; 
+  border: 1px solid #bebebe;
+  border-radius: 20px;
+  padding: 32px 54px;
+  width: 100%;
+}
+
+.rate_item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 20px;
+}
+
+/* 입찰 이력 & 출품 이력 */
+.biddingItem_container, .biddedItem_container {
+  margin: 40px 0;
+}
+
+.biddingItem_container_title, .biddedItem_container_title {
+  padding-bottom: 20px;
+}
+
+/* 관심 상품 */
+.favoriteItem_container_title{
+  display: flex;
+  justify-content: space-between;
+}
+
+.favoriteItem_container_title button {
+  border: none;
+  background: none;
+  color: #bebebe;
+  cursor: pointer;
+}

@@ -72,3 +72,27 @@ export async function getItemsByCommunityId(acutionItemsRequest) {
     throw error; 
   }
 }
+
+// 관심 상품 페이지
+export async function getFavoriteItems() {
+  try {
+    // const response = await axios.get(`http://localhost:8080/api/items/favorite/${user_id}`);
+    // return response.data;
+    const data = [];
+    for (let i = 0; i < 20; i++) {
+      data.push({
+        communityId: i,
+        image: "/src/assets/test_image.png",
+        favorited: true,
+        name: `관심이 있어!!`,
+        priceInfo: {price: i*10000, type: ""},
+        additionalInfo: null,
+        overlayText: false
+      });
+    }
+    return data;
+  } catch (error) {
+    console.error("Error fetching:", error);
+    throw error; 
+  }
+}
