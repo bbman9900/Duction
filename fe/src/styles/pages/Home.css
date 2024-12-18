@@ -1,3 +1,13 @@
 .home_main_image img {
   width: 1024px;
 }
+
+.home_popularCategories_container, .home_cardItems_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.home_popularCategories_item, .home_cardItems_item {
+  width: calc((1024px - (12px * 4)) / 5); 
+}

@@ -1,7 +1,7 @@
 // import axios from 'axios'
 
 // 홈 페이지 - 인기 카테고리
-export async function getPopularCommunitie() {
+export async function getPopularCategories() {
   try {
     // const response = await axios.get("http://localhost:8080/api/communities/popularity");
     // return response.data;

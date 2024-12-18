@@ -1,9 +1,0 @@
-.communityList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.communityList_item {
-  width: calc((1024px - (12px * 4)) / 5); 
-}
