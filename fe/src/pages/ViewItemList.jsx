@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getCommunityInfo } from '../services/communityService'
 import { getItemsByCommunityId } from '../services/itemsService'
-import GodoTitleLabe from '../components/Labels/GodoTitleLabel'
-import CardItemsList from '../components/ItemCard/ItemCardList'
+import GodoTitelLabe from '../components/Labels/GodoTitleLabel'
+import ItemCard from '../components/ItemCard/ItemCard'
 import RoundButton from '../components/Button/RoundButton'
 import RectangleButton from '../components/Button/RectangleButton'
 import SearchTextField from '../components/SearchTextField'
@@ -107,9 +107,9 @@ export default function ViewItemList() {
   return (
     <>
       <div className='auctionItems_title'>
-        <GodoTitleLabe text={communityInfo.name} />
+        <GodoTitelLabe text={communityInfo.name} />
       </div>
-
+      
       <div className={`message_container ${disply ? "disply" : ""}`}>
         <div className='message_text'>"으아아아 으아아아 으아아아 낙찰찰 차라라라라라랄"</div>
       </div>
@@ -124,7 +124,11 @@ export default function ViewItemList() {
       </div>
 
       <div className='auctionItems_cardItems_container'>
-        <CardItemsList itemList={auctionItems} />
+        {auctionItems && auctionItems.map((item, index) => (
+          <div className='auctionItems_cardItems_item' key={index}>
+            <ItemCard key={index} data={item} />
+          </div>
+        ))}
       </div>
 
       <div className='auctionItems_pagination'>

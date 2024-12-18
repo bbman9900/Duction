@@ -1,0 +1,40 @@
+.view-myinfo-container {
+  background-color: var(--defaultwhite);
+  width: 100%; /* 전체 너비 */
+  max-width: 1024px; /* 최대 너비 설정 */
+  margin: auto; /* 중앙 정렬 */
+  padding: 20px; /* 내부 여백 추가 */
+  position: relative;
+}
+
+.nickname-wrapper,
+.phone-wrapper,
+.address-wrapper {
+  display: flex;
+  align-items: flex-end; /* 수직 아래쪽 정렬 */
+  margin-bottom: 32px; /* 아래 여백 */
+  margin-top: 42px; /* 위쪽 여백 추가 */
+}
+
+.TextField_container {
+  display: flex; /* Flexbox를 사용하여 내부 요소를 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  height: 32px; /* 높이 */
+  width: 100%; /* 부모 요소의 너비에 맞춤 */
+  max-width: 800px; /* 최대 너비 설정 (필요에 따라 조정 가능) */
+  border: 1px solid #bebebe; /* 기본 테두리 */
+  padding: 8px; /* 내부 여백 */
+  position: absolute;
+  right: 0px;
+}
+
+.profile-image {
+  height: 100px; /* 프로필 사진 높이 */
+  width: 100px; /* 프로필 사진 너비 */
+  border-radius: 50%; /* 원형으로 만들기 */
+  background-color: #ccc; /* 기본 배경색 */
+  margin-bottom: 16px; /* 아래 여백 */
+}
+
+
+

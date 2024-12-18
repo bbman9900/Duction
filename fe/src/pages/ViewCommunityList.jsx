@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import RoundButton from '../components/Button/RoundButton';
 import GodoTitleLabel from '../components/Labels/GodoTitleLabel';
 import PreSubTitleLabel from '../components/Labels/PreSubTitleLabel';
-import { fetchCommunityList } from '../services/communityService';
+import { fetchCommunityList } from '../services/api';
 
 function ViewCommunityList() {
   const [abc, setAbc] = useState("가나다순");

@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import '@styles/components/Buttons.css'
 
-export default function RoundButton({ options, onChange, selectedOption }) {
-  const [selected, setSelected] = useState(selectedOption ?? options[0].value);
+export default function RoundButton({ options, onChange }) {
+  const [selected, setSelected] = useState(options[0].value);
 
   const handleChange = (value) => {
     setSelected(value);
