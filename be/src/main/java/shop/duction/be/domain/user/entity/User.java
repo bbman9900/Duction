@@ -42,13 +42,6 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String profileImage; // 프로필 사진
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private IsActive isActive = IsActive.ACTIVE; // 상태 (ACTIVE, INACTIVE, SUSPENDED)
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role = Role.USER; // 역할 (USER, ADMIN)
 
     @Column(nullable = false, length = 20)
     private String phone; // 휴대폰 번호
@@ -73,6 +66,14 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime registTime; // 가입 일시
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private IsActive isActive = IsActive.ACTIVE; // 상태 (ACTIVE, INACTIVE, SUSPENDED)
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER; // 역할 (USER, ADMIN)
 
     // 관계 매핑
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

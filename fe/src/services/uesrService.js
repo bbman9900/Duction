@@ -72,3 +72,13 @@ export async function deleteUserProfileImage() {
   }
 }
 
+// 로그인
+export async function getKakaoLoginUrl() {
+  try {
+    const response = await api.get(`auth/kakao/url`);
+    return response.data.url;
+  } catch (error) {
+    console.error("Failed to fetch Kakao Auth URL", error);
+    throw error;
+  }
+}
