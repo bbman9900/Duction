@@ -1,7 +1,7 @@
 import PreCaptionLabel from './Labels/PreCaptionLabel'
 import PreSubTitleLabel from './Labels/PreSubTitleLabel'
 
-import '@styles/components/Historybox.css'
+import '@styles/components/HistoryBox.css'
 
 export default function Historybox({ items, onClick }) {
   return (
