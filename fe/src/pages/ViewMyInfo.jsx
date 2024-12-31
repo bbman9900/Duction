@@ -7,7 +7,7 @@ import HorizontalRule from '../components/HorizontalRule';
 import GodoTitleLabel from '../components/Labels/GodoTitleLabel';
 import PreTitleLabel from '../components/Labels/PreTitleLabel';
 import PreSubTitleLabel from '../components/Labels/PreSubTitleLabel';
-import defaultProfileImage from '../assets/test_image.png';
+import defaultProfileImage from '/src/assets/test_image.png';
 import ProfileImage from '../components/ProfileImage';
 import s3Upload from '../utils/S3Uploader';
 
