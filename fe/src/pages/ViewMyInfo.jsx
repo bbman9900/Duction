@@ -9,7 +9,6 @@ import PreTitleLabel from '../components/Labels/PreTitleLabel';
 import PreSubTitleLabel from '../components/Labels/PreSubTitleLabel';
 import defaultProfileImage from '../assets/test_image.png';
 import ProfileImage from '../components/ProfileImage';
-import s3Upload from '../utils/S3Uploader';
 
 import '../styles/pages/ViewMyInfo.css';
 

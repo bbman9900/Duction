@@ -30,6 +30,7 @@ export default function ViewItemList() {
   const navigate = useNavigate();
   const location = useLocation();
   const communityId = location.state.communityId;
+  const communityName = location.state.communityName
 
   const fetchAuctionItems = async () => {
     const acutionItemsRequest = {
@@ -95,7 +96,7 @@ export default function ViewItemList() {
   return (
     <>
       <div className='auctionItems_title'>
-        <GodoTitleLabel text={auctionItems?.content?.[0]?.communityName || "No Data"} />
+        <GodoTitleLabel text={auctionItems?.content?.[0]?.communityName || communityName} />
       </div>
 
       <div className={`message_container ${disply ? "disply" : ""}`}>

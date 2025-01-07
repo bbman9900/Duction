@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 import shop.duction.be.domain.community.entity.Community;
 import shop.duction.be.domain.community.repository.CommunityRepository;
 import shop.duction.be.domain.bidding.entity.BiddedHistory;
@@ -40,11 +41,8 @@ import shop.duction.be.domain.user.repository.UserRepository;
 import shop.duction.be.exception.ItemNotFoundException;
 import shop.duction.be.domain.item.enums.RareTier;
 import shop.duction.be.domain.item.repository.FavoriteItemRepository;
-import shop.duction.be.utils.DateTimeUtils;
-import shop.duction.be.utils.ItemConditionConverter;
-import shop.duction.be.utils.RareTierCheck;
-import shop.duction.be.utils.RareTierCheckUtils;
-import shop.duction.be.utils.RareTierConverter;
+import shop.duction.be.utils.*;
+import shop.duction.be.utils.aws.CloudFrontUrlGenerator;
 
 @Service
 @Transactional
@@ -60,6 +58,7 @@ public class ItemService {
   private final BiddingHistoryRepository biddingHistoryRepository;
   private final ExhibitHistoryRepository exhibitHistoryRepository;
   private final BidHistoryRepository bidHisotryRepository;
+  private final CloudFrontUrlGenerator cloudFrontUrlGenerator;
 
   public ViewItemEditResponseDTO readItemEdit(int itemId) {
     Item item = itemRepository.findById(itemId)
@@ -180,6 +179,69 @@ public class ItemService {
     return favoriteItemRepository.findeFavoriteItemsByUserAndItemIds(userId, ids);
   }
 
+//  public Integer createItem(int userId, RegistItemRequestDTO dto, List<String > fileUrls) {
+//    Community community = communityRepository.findById(dto.getCommunityId()).get();
+//    User user = userRepository.findById(userId)
+//            .orElseThrow(() -> new ItemNotFoundException("User with ID " + userId + " not found"));
+//
+//    // 레어 등급 판정
+//    RareTier rareTier = RareTierCheckUtils.rareCheck(dto.getRareScore());
+//
+//    ItemCondition itemCondition = ItemCondition.fromString(dto.getItemCondition());
+//
+//    // 출품 상품 등록
+//    Item item = new Item();
+//    item.setName(dto.getName());
+//    item.setStartPrice(dto.getStartingBid());
+//    item.setImmediatePrice(dto.getImmediateBid());
+//    item.setEndTime(dto.getEndTime());
+//    item.setDescription(dto.getDescription());
+//    item.setAuctionStatus(AuctionStatus.BIDDING_BEFORE);
+//    item.setItemCondition(itemCondition);
+//    item.setRareScore(dto.getRareScore());
+//    item.setRareTier(rareTier);
+//    item.setIsModified(false);
+//    item.setIsChecked(false);
+//    item.setReportedCount(0);
+//    item.setRegistTime(LocalDateTime.now());
+//    item.setEndBidTime(null);
+//    item.setTotalView(0);
+//    item.setTotalBidding(0);
+//    item.setCommunity(community);
+//    item.setUser(user);
+//
+//    Item savedItem = itemRepository.save(item);
+//
+//    for (String imageUrl : fileUrls) {
+//      ItemImage itemImage = new ItemImage();
+//      itemImage.setUrl(imageUrl);
+//      itemImage.setItem(savedItem);
+//      savedItem.addItemImage(itemImage);
+//    }
+//
+//    Item savedItem2 = itemRepository.save(savedItem);
+//
+//    // 최초 레어 등급 평가
+//    UserItemKey userItemKey = new UserItemKey(user.getUserId(), savedItem2.getItemId());
+//
+//    RareRating rareRating = RareRating.builder()
+//            .id(userItemKey)
+//            .user(user)
+//            .item(savedItem2)
+//            .rareScore(dto.getRareScore())
+//            .build();
+//    rareRatingRepository.save(rareRating);
+//
+//    ExhibitHistory exhibitHistory = new ExhibitHistory();
+//    exhibitHistory.setRegistTime(LocalDateTime.now());
+//    exhibitHistory.setItem(savedItem2);
+//    exhibitHistory.setStatus(ExhibitStatus.BIDDING_UNDER);
+//    exhibitHistory.setUser(user);
+//    exhibitHistoryRepository.save(exhibitHistory);
+//
+//    return savedItem2.getItemId();
+//  }
+
   public Integer createItem(int userId, RegistItemRequestDTO dto) {
     Community community = communityRepository.findById(dto.communityId()).get();
     User user = userRepository.findById(userId)
@@ -190,11 +252,13 @@ public class ItemService {
 
     ItemCondition itemCondition = ItemCondition.fromString(dto.itemCondition());
 
+    LocalDateTime now = LocalDateTime.now();
+
     // 출품 상품 등록
     Item item = Item.builder()
             .name(dto.name())
-            .startPrice(dto.startPrice())
-            .immediatePrice(dto.immediatePrice()) // null 가능
+            .startPrice(dto.startingBid())
+            .immediatePrice(dto.immediateBid()) // null 가능
             .endTime(dto.endTime())
             .description(dto.description())
             .auctionStatus(AuctionStatus.BIDDING_NOT)
@@ -204,7 +268,7 @@ public class ItemService {
             .isModified(false)
             .isChecked(false)
             .reportedCount(0)
-            .registTime(LocalDateTime.now())
+            .registTime(now)
             .endBidTime(null)
             .totalView(0)
             .totalBidding(0)
@@ -245,8 +309,18 @@ public class ItemService {
             .build();
     rareRatingRepository.save(rareRating);
 
+    // 출품 이력 등록
+    ExhibitHistory exhibitHistory = ExhibitHistory.builder()
+            .registTime(now)
+            .status(ExhibitStatus.BIDDING_NOT)
+            .user(user)
+            .item(savedItem2)
+            .build();
+    exhibitHistoryRepository.save(exhibitHistory);
+
     return savedItem2.getItemId();
-}
+  }
+
 
   public ViewItemDetailsResponseDTO readItemDetails(int itemId) {
     Item item = itemRepository.findById(itemId)
@@ -256,6 +330,7 @@ public class ItemService {
     List<String> imageUrls = new ArrayList<>();
     if (item.getItemImages() != null && !item.getItemImages().isEmpty()) {
       for (ItemImage image : itemImages) {
+        cloudFrontUrlGenerator.generateCloudFrontUrl(image.getUrl());
         imageUrls.add(image.getUrl());
       }
     }

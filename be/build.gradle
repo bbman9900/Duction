@@ -24,26 +24,46 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-	implementation 'org.modelmapper:modelmapper:3.2.2'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-	implementation 'io.github.cdimascio:dotenv-java:3.1.0'
-  implementation 'software.amazon.awssdk:s3:2.29.43'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'org.modelmapper:modelmapper:3.1.1'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	dependencies {
+		// Spring Boot Starter for Web: 웹 애플리케이션 개발에 필요한 기본 구성 (MVC, REST API 등)
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+
+		// Spring Boot Starter for JPA (Hibernate 등) 사용
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+		// Spring Boot DevTools: 개발 환경에서 자동 재시작 등 편의 기능 제공
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+		// Spring Boot Starter for Mail: 이메일 전송 기능 지원
+		implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+		// 테스트 관련 라이브러리
+		testImplementation 'org.springframework.boot:spring-boot-starter-test' // Spring Boot 테스트 지원
+		testImplementation 'org.springframework.security:spring-security-test' // Spring Security 테스트 지원
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // JUnit 테스트 실행기
+
+		// JWT(Json Web Token) 라이브러리: 토큰 생성 및 검증에 사용
+		implementation 'io.jsonwebtoken:jjwt-impl:0.12.6'
+		implementation 'io.jsonwebtoken:jjwt-jackson:0.12.6' // Jackson으로 JWT 클레임 직렬화/역직렬화
+
+		// SpringDoc OpenAPI: API 문서 자동 생성 (Swagger UI 포함)
+		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
+		// Amazon
+		implementation 'com.amazonaws:aws-java-sdk-s3:1.12.562'
+
+		// dotenv: .env 파일을 통해 환경 변수 관리
+		implementation 'io.github.cdimascio:dotenv-java:3.1.0'
+
+		// Lombok: 보일러플레이트 코드를 줄이기 위한 라이브러리 (getter/setter, @Data 등)
+		compileOnly 'org.projectlombok:lombok' // 컴파일 시에만 포함
+		annotationProcessor 'org.projectlombok:lombok' // 롬복 코드 생성용 애노테이션 프로세서
+
+		// MySQL JDBC 드라이버: MySQL 데이터베이스 연결
+		runtimeOnly 'com.mysql:mysql-connector-j'
+
+		implementation 'software.amazon.awssdk:s3:2.29.43'
+	}
 }
 
 tasks.named('test') {

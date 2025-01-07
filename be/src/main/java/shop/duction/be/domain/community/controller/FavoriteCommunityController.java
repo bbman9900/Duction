@@ -16,11 +16,10 @@ public class FavoriteCommunityController {
 
   private final FavoriteCommunityService favoriteCommunityService;
 
-  // 일단 하드코딩
-  private Integer userId = 1;
-
   @PostMapping("/add/{communityId}")
-  public ResponseEntity<String> addFavoriteCommunity(@PathVariable("communityId") int communityId) {
+  public ResponseEntity<String> addFavoriteCommunity(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable("communityId") int communityId) {
     try {
       favoriteCommunityService.addFavoriteCommunity(communityId, userId);
       return ResponseEntity.ok("관심 커뮤니티 등록 성공");
@@ -32,7 +31,9 @@ public class FavoriteCommunityController {
   }
 
   @DeleteMapping("/delete/{communityId}")
-  public void deleteFavoriteCommunity(@PathVariable("communityId") int communityId) {
+  public void deleteFavoriteCommunity(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable("communityId") int communityId) {
     favoriteCommunityService.deleteFavoriteCommunity(communityId, userId);
   }
 }

@@ -1,8 +1,8 @@
 import '@styles/components/Labels.css'
 
-export default function GodoTitleLabel({text}) {
+export default function GodoTitleLabel({text, onClick}) {
   return (
   <>
-    <div className='titleLabelGodo'>{text}</div>
+    <div className='titleLabelGodo' onClick={onClick}>{text}</div>
   </>)
 }

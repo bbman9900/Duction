@@ -16,12 +16,11 @@ import java.util.List;
 public class AdminController {
   private final AdminService adminService;
 
-  // 운영자 아이디 일단 하드 코딩
-  Integer userId = 1;
-
   // 커뮤니티 개설 요청 관련
   @PostMapping("/request/creat/community")
-  public ResponseEntity<String> postCreateCommunity(@RequestBody CreateCommunityRequestDto createCommunityRequestDto) {
+  public ResponseEntity<String> postCreateCommunity(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody CreateCommunityRequestDto createCommunityRequestDto) {
     return adminService.postCreateCommunity(createCommunityRequestDto, userId);
   }
 
@@ -44,7 +43,9 @@ public class AdminController {
 
   // 상품 삭제 요청 관련
   @PostMapping("/request/delete/item")
-  public ResponseEntity<String> postDeleteItemData(@RequestBody DeleteItemRequestDto request) {
+  public ResponseEntity<String> postDeleteItemData(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody DeleteItemRequestDto request) {
     return adminService.postDeleteItemData(request, userId);
   }
 
@@ -90,7 +91,9 @@ public class AdminController {
   }
 
   @PostMapping("/validate/item/Ok")
-  public ResponseEntity<String> validateItemOk(@RequestBody ShipRequestDto shipRequestDto) {
+  public ResponseEntity<String> validateItemOk(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody ShipRequestDto shipRequestDto) {
     return adminService.validateItemOk(shipRequestDto, userId);
   }
 

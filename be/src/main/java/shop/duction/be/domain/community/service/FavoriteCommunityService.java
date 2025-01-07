@@ -32,7 +32,6 @@ public class FavoriteCommunityService {
             new IllegalArgumentException("카테고리를 찾을 수 없습니다"));
 
     FavoriteCommunityId favoriteCommunityId = new FavoriteCommunityId(communityId, userId);
-
     FavoriteCommunity favoriteCommunity = new FavoriteCommunity();
     favoriteCommunity.setFavoriteCommunityId(favoriteCommunityId);
     favoriteCommunity.setRegistDate(LocalDateTime.now());

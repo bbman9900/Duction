@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { getCommunitySearchResults } from '../services/communityService'
 import { getItemSearchResults } from '../services/itemService'
 import GodoTitleLabel from '../components/Labels/GodoTitleLabel'
-import CommunityList from '../components/CommunityList'
+import CommunityList from '../components/CommunityList/CommunityList'
 import CardItemsList from '../components/ItemCard/ItemCardList'
 import RoundButton from '../components/Button/RoundButton'
 

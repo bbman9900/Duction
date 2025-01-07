@@ -2,6 +2,7 @@ package shop.duction.be.domain.item.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 import shop.duction.be.domain.admin.entity.ItemDeleteRequest;
@@ -79,7 +80,7 @@ public class Item {
     private Integer totalBidding = 0;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemImage> itemImages;
+    private List<ItemImage> itemImages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id", nullable = false)
@@ -115,5 +116,15 @@ public class Item {
 
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     private BidderShip bidderShip;
+
+    public void addItemImage(ItemImage itemImage) {
+        this.itemImages.add(itemImage);
+        itemImage.setItem(this);
+    }
+
+    public void removeItemImage(ItemImage itemImage) {
+        itemImages.remove(itemImage);
+        itemImage.setItem(null);
+    }
 }
 

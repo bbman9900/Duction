@@ -1,7 +1,7 @@
-jwt:
-  secret: ${JWT_SECRET} # Base64로 인코딩된 비밀키
-  access-token-validity: ${JWT_ACCESS_TOKEN_VALIDITY:900000}         # Access Token 유효기간 (15분, 밀리초 단위)
-  refresh-token-validity: ${JWT_REFRESH_TOKEN_VALIDITY:604800000}     # Refresh Token 유효기간 (7일, 밀리초 단위)
+#jwt:
+#  secret: ${JWT_SECRET} # Base64로 인코딩된 비밀키
+#  access-token-validity: ${JWT_ACCESS_TOKEN_VALIDITY:900000}         # Access Token 유효기간 (15분, 밀리초 단위)
+#  refresh-token-validity: ${JWT_REFRESH_TOKEN_VALIDITY:604800000}     # Refresh Token 유효기간 (7일, 밀리초 단위)
 
 dotenv:
   enabled: true
@@ -12,7 +12,14 @@ spring:
     name: be
   config:
     import: "optional:file:local.env"
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 18MB
   datasource:
+#    url: ${RDS_URL}
+#    username: ${RDS_USERNAME}
+#    password: ${RDS_PASSWORD}
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
@@ -36,8 +43,8 @@ spring:
       client:
         registration:
           kakao:
-            client-id: ${KAKAO_TEST_CLIENT_ID}
-            client-secret: ${KAKAO_TEST_CLIENT_SECRET}
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
             scope:
               - profile_nickname
 #              - profile_image
@@ -66,3 +73,5 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+  jwt:
+    secret-key: ${JWT_SECRET}

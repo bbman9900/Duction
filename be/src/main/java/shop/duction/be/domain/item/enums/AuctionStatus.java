@@ -1,5 +1,6 @@
 package shop.duction.be.domain.item.enums;
 
+
 public enum AuctionStatus {
     BIDDING_BEFORE, // 입찰 전
     BIDDING_UNDER,  // 입찰중

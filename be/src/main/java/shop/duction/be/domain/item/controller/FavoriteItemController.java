@@ -16,21 +16,22 @@ import java.util.List;
 public class FavoriteItemController {
   private final FavoriteItemService favoriteItemService;
 
-  // 일단 하드 코딩
-  private Integer userId = 1;
-
   @PostMapping("/add/{itemId}")
-  public void addFavoriteItem(@PathVariable int itemId) {
+  public void addFavoriteItem(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable int itemId) {
     favoriteItemService.addFavoriteItem(itemId, userId);
   }
 
   @DeleteMapping("/delete/{itemId}")
-  public void deleteFavoriteItem(@PathVariable int itemId) {
+  public void deleteFavoriteItem(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable int itemId) {
     favoriteItemService.deleteFavoriteItem(itemId, userId);
   }
 
   @GetMapping("/histories")
-  public List<ItemCardResponseDto> getFavoriteItems() {
+  public List<ItemCardResponseDto> getFavoriteItems(@RequestAttribute("userId") Integer userId) {
     return favoriteItemService.getFavoriteItems(userId);
   }
 }

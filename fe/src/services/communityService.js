@@ -12,32 +12,10 @@ export async function getPopularCommunities() {
 }
 
 // 커뮤니티 목록 가져오기
-export async function fetchCommunityList() {
+export async function getCommunities() {
   try {
-    // const response = await api.get("communities/list");
-    // return response.data;
-    const data = [];
-    data.push({
-      name: "가방 커뮤니티",
-      first_word: "ㄱ"
-    });
-    data.push({
-      name: "나방",
-      first_word: "ㄴ"
-    });
-    data.push({
-      name: "하방",
-      first_word: "ㅎ"
-    });
-    data.push({
-      name: "apple",
-      first_word: "A"
-    });
-    data.push({
-      name: "ZionT",
-      first_word: "Z"
-    });
-    return data;
+    const response = await api.get("communities");
+    return response.data;
   } catch (error) {
     console.error("Error fetching community list:", error);
     throw error;

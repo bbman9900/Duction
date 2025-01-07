@@ -20,11 +20,15 @@ import shop.duction.be.domain.user.dto.ProfileImageEditRequestDTO;
 import shop.duction.be.domain.user.entity.ExhibitorRating;
 import shop.duction.be.domain.user.entity.User;
 import shop.duction.be.domain.user.enums.IsActive;
+import shop.duction.be.domain.user.enums.Role;
 import shop.duction.be.domain.user.repository.ExhibitorRatingRepository;
 import shop.duction.be.domain.user.repository.UserRepository;
 import shop.duction.be.exception.ItemNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -33,6 +37,39 @@ public class UserService {
   private final UserRepository userRepository;
   private final ExhibitorRatingRepository exhibitorRatingRepository;
   private final ItemRepository itemRepository;
+
+  public void saveMyInfo(Map<String, Object> userInfo, String refreshToken) {
+    String kakaoId = userInfo.get("id").toString();
+
+    Map<String, Object> account = (Map<String, Object>) userInfo.get("kakao_account");
+    String email = account != null ? (String) account.get("email") : null;
+    String phoneNumber = account != null ? (String) account.get("phone_number") : null;
+    String address = account != null ? (String) account.get("address") : null;
+
+    Map<String, Object> profile = (Map<String, Object>) account.get("profile");
+    String nickname = profile != null ? (String) profile.get("nickname") : "새회원";
+    String profileImage = profile != null ? (String) profile.get("profile_image_url") : "/src/assets/test_image.png";
+
+    User newUser = new User();
+    newUser.setEmail(email);
+    newUser.setNickname(nickname);
+    newUser.setProfileImage(profileImage);
+    newUser.setIsActive(IsActive.ACTIVE);
+    newUser.setRole(Role.USER);
+    newUser.setPhone(phoneNumber);
+    newUser.setAddress(address);
+    newUser.setHeldBid(0);
+    newUser.setUsableBid(0);
+    newUser.setRate(50.0f);
+    newUser.setPenaltyCount(0);
+    newUser.setRefreshToken(refreshToken);
+    newUser.setRegistTime(LocalDateTime.now());
+    userRepository.save(newUser);
+  }
+
+  public Optional<User> checkIfUserExists(String email) {
+    return userRepository.findByEmail(email);
+  }
 
   public MyInfoResponseDto getMyInfo(Integer userId) {
     User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));

@@ -21,30 +21,33 @@ import java.util.List;
 public class BidPointController {
   private final BidPointService bidPointService;
 
-  // 일단 하드 코딩
-  private Integer userId = 1;
-
   @GetMapping("/user")
-  public UserBidPointResponse getUserBidPoint() {
+  public UserBidPointResponse getUserBidPoint(@RequestAttribute("userId") Integer userId) {
     return bidPointService.getUserBidPoint(userId);
   }
 
   @PostMapping("/histories")
-  public List<BidPointHistoriesResponseDto> getBidPointHistories(@RequestBody BidPointHistoriesRequestDto request) {
+  public List<BidPointHistoriesResponseDto> getBidPointHistories(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody BidPointHistoriesRequestDto request) {
     return bidPointService.getBidPointHistories(request, userId);
   }
 
   @PostMapping("/charge/{bidPoint}")
-  public ResponseEntity<String> addChargeBidPoint(@PathVariable("bidPoint") Integer bidPoint) {
-    return handleBidPointUpdate(bidPoint, BidPointType.CHARGE);
+  public ResponseEntity<String> addChargeBidPoint(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable("bidPoint") Integer bidPoint) {
+    return handleBidPointUpdate(bidPoint, BidPointType.CHARGE, userId);
   }
 
   @PostMapping("/withdrwal/{bidPoint}")
-  public ResponseEntity<String> addWithdrawBidPoint(@PathVariable("bidPoint") Integer bidPoint) {
-    return handleBidPointUpdate(bidPoint, BidPointType.WITHDRAWAL);
+  public ResponseEntity<String> addWithdrawBidPoint(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable("bidPoint") Integer bidPoint) {
+    return handleBidPointUpdate(bidPoint, BidPointType.WITHDRAWAL, userId);
   }
 
-  private ResponseEntity<String> handleBidPointUpdate(Integer bidPoint, BidPointType type) {
+  private ResponseEntity<String> handleBidPointUpdate(Integer bidPoint, BidPointType type, Integer userId) {
     try {
       bidPointService.updateBidPoint(bidPoint, userId, type);
       return ResponseEntity.ok(type == BidPointType.CHARGE ? "충전 성공" : "현금화 성공");

@@ -1,48 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
-import RectangleButton from '../components/Button/RectangleButton';
-import "../styles/pages/ViewItem.css"
+import { useModal } from '../hooks/useModal'
+import { getItemDetails, postItemRareScore, putBiddingGiveup, putReport, postImmediateBidding } from '../services/itemService';
 import HorizontalRule from '../components/HorizontalRule';
 import GodoTitleLabel from '../components/Labels/GodoTitleLabel';
 import PreTitleLabel from '../components/Labels/PreTitleLabel';
 import PreSubTitleLabel from '../components/Labels/PreSubTitleLabel';
-import { getItemDetails, postItemRareScore, putBiddingGiveup, putReport, postBidding, postImmediateBidding } from '../services/itemService';
 import PriceSummary from '../components/PriceSummary';
 import StarRating from '../components/Button/StarRating';
-import { useModal } from '../hooks/useModal'
 import SubmitBidModalContent from '../components/Modal/SubmitBidModalContent'
 import CustomModal from '../components/Modal/CustomModal'
 import PreTextLabel from '../components/Labels/PreTextLabel';
 import IconPlusLabel from '../components/Labels/IconPlusLabel'
+import RectangleButton from '../components/Button/RectangleButton';
 
-// const ViewItem = ({ itemId }) => {
+import "../styles/pages/ViewItem.css"
+
 const ViewItem = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const itemId = 1;
-  const fileInputRef = useRef(null);
-
-  const maxFileSize = 2 * 1024 * 1024; // 2MB
-  const maxFileCount = 9; // 최대 파일 개수
-
-  const [data, setData] = useState({
-    communityId: 1,
-    communityName: "리그오",
-    itemId: 1,
-    itemName: "상",
-    images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_8Rj-vULPVGhf-eQyiY5sG2dMcHFQzD6RrQ&s"],
-    description: "아아아 하기 싫다ㅏㅏㅏ\n저 대신 일 해주실 분 경매 하세욧!!\n지금 여기서 일할 수 있는 기회ㅣㅣㅣ \n놓치지 말고 사십시오!!!!!!!!!",
-    itemCondition: "사용감 적음",
-    rareTier: "마스터컬렉션즈레어",
-    startPrice: 7000,
-    endTime: "2025-01-07T23:59:59",
-    nowPrice: 8000,
-    totalView: 10000,
-    totalBidding: 10000,
-    exhibitorNickName: "오쿠맨",
-    exhibitorRate: 58,
-    immediatePrice: 20000,
-  }); // 이미지 URL 상태
+  const itemId = location.state.itemId;
+  const [data, setData] = useState('');
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // 현재 보여지는 이미지 인덱스
   const [remainingTime, setRemainingTime] = useState(""); // 남은 시간
@@ -51,35 +29,23 @@ const ViewItem = () => {
   const [isReported, setIsReported] = useState(false); // 레어 점수 (별점)
   const { isModalOpen, modalContent, openModal, closeModal } = useModal();
 
-  // 컴포넌트가 마운트될 때 get 요청
+  async function fetchItemDetails() {
+    try {
+      const response = await getItemDetails(itemId);
+      setData(response);
+    } catch (error) {
+      alert("아이템 정보를 불러오는 데 실패했습니다");
+    }
+  }
+
   useEffect(() => {
-    console.log(itemId);
     if (!itemId) {
       console.error("itemId가 전달되지 않았습니다.");
       return;
     }
-    // 예: API 호출
-    async function fetchItemDetails() {
-      try {
-        // 실제 API 호출 로직 작성 필요
-        const response = await getItemDetails(itemId);
-        const data = await response;
-        console.log(data);
-        setData(data);
-        // setData(response);
-        // console.log(data.images);
-      } catch (error) {
-        console.error("아이템 정보를 불러오는 데 실패했습니다:", error);
-        alert("아이템 정보를 불러오는 데 실패했습니다");
-      }
-    }
 
     fetchItemDetails();
   }, []);
-
-  useEffect(() => {
-    setImages(data.images); // 상태가 변경된 후에 데이터를 확인
-  }, [data]);
 
   // 남은 시간에 따라 업데이트
   useEffect(() => {
@@ -145,19 +111,11 @@ const ViewItem = () => {
       }
     };
 
-    updateRemainingTime(); // 초기 실행
+    updateRemainingTime();
 
-    // 컴포넌트 언마운트 시 업데이트 정리
-    return () => clearTimeout(interval); // 컴포넌트 언마운트 시 업데이트 정리
+    return () => clearTimeout(interval);
   }, [data.endTime]);
 
-
-  // communityName 클릭 시 실행될 함수
-  const handleCommunityClick = () => {
-    if (data?.communityId) {
-      navigate(`/community/${data.communityId}`);
-    }
-  };
 
   // 왼쪽 화살표 클릭 시 이전 이미지로 이동
   const handlePrevClick = () => {
@@ -176,30 +134,21 @@ const ViewItem = () => {
   const onBid = () => {
     const probs = {
       itemId: data.itemId,
-      itemName: data.itemName, 
-      startingPrice: data.startPrice, 
-      nowPrice: data.nowPrice, 
-      immediatePrice: data.immediatePrice, 
+      itemName: data.itemName,
+      startingPrice: data.startPrice,
+      nowPrice: data.nowPrice,
+      immediatePrice: data.immediatePrice,
     };
 
     openModal(<SubmitBidModalContent probs={probs} onClose={closeModal} />);
   };
 
   const onImmediateBid = async () => {
-    const userConfirmed = window.confirm(`${data.immediatePrice}비드로 즉시 낙찰 하겠습니까?`); // 확인창 표시
-
-    if (!userConfirmed) {
-      // 사용자가 "아니오"를 선택한 경우
-      console.log("사용자가 즉시 낙찰을 취소했습니다.");
-      return;
-    }
+    const userConfirmed = window.confirm(`${data.immediatePrice}비드로 즉시 낙찰 하겠습니까?`);
 
     try {
-
-      const response = await postImmediateBidding(data.itemId); // API 요청
-      console.log("서버 응답:", response); // 응답 데이터 확인
+      const response = await postImmediateBidding(data.itemId);
     } catch (error) {
-      console.error("입찰 포기 중 오류 발생:", error);
       alert("입찰 포기하는 데 실패했습니다.");
     }
   };
@@ -237,20 +186,16 @@ const ViewItem = () => {
 
     try {
       setRareScore(value);
-
-      const response = await postItemRareScore(data.itemId, dto); // API 요청
-      console.log("서버 응답:", response); // 응답 데이터 확인
-      console.log(`${value}점의 레어 등급 평가가 제출되었습니다.`);
+      const response = await postItemRareScore(data.itemId, dto);
       alert(`${value}점의 레어 등급 평가가 제출되었습니다.`);
     } catch (error) {
-      console.error("레어 등급 평가 제출 중 오류 발생:", error);
       alert("레어 등급 평가를 제출하는 데 실패했습니다.");
     }
   };
 
   const onReport = async () => {
     if (!isReported) {
-      await putReport(data.itemId); // API 요청
+      await putReport(data.itemId);
       setIsReported(true);
     } else {
       alert("이미 신고하신 상품입니다.");
@@ -258,19 +203,11 @@ const ViewItem = () => {
   };
 
   const onGiveup = async () => {
-    const userConfirmed = window.confirm("정말 입찰을 포기하겠습니까?"); // 확인창 표시
-
-    if (!userConfirmed) {
-      // 사용자가 "아니오"를 선택한 경우
-      console.log("사용자가 입찰 포기를 취소했습니다.");
-      return;
-    }
+    const userConfirmed = window.confirm("정말 입찰을 포기하겠습니까?");
 
     try {
-      const response = await putBiddingGiveup(data.itemId); // API 요청
-      console.log("서버 응답:", response); // 응답 데이터 확인
+      const response = await putBiddingGiveup(data.itemId);
     } catch (error) {
-      console.error("입찰 포기 중 오류 발생:", error);
       alert("입찰 포기하는 데 실패했습니다.");
     }
   };
@@ -282,9 +219,9 @@ const ViewItem = () => {
   return (
     <div className="view-myinfo-container">
       <CustomModal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
-      
+
       {/* 화면 왼쪽 최상단에 communityName 표시 */}
-      <div className="community-header" onClick={handleCommunityClick}>
+      <div className="community-header">
         <GodoTitleLabel text={data.communityName || "커뮤니티 이름 없음"} />
       </div>
 
@@ -362,11 +299,11 @@ const ViewItem = () => {
             </div>
             <div className="item-info-detail-row">
               <PreTextLabel text={"조회수"} />
-              <PreTextLabel text={`${data.totalView.toLocaleString()}회`}/>
+              <PreTextLabel text={`${data.totalView.toLocaleString()}회`} />
             </div>
             <div className="item-info-detail-row">
               <PreTextLabel text={"입찰 건수"} />
-              <PreTextLabel text={`${data.totalBidding.toLocaleString()}건`}/>
+              <PreTextLabel text={`${data.totalBidding.toLocaleString()}건`} />
             </div>
             <div className="item-info-detail-row">
               <PreTextLabel text={"상태"} />
@@ -374,7 +311,7 @@ const ViewItem = () => {
             </div>
             <div className="item-info-detail-row">
               <PreTextLabel text={"레어 등급"} />
-              <PreTextLabel text={data.rareTier} style={{fontFamily: "HakgyoansimByeolbichhaneulTTF-B"}}/>
+              <PreTextLabel text={data.rareTier} style={{ fontFamily: "HakgyoansimByeolbichhaneulTTF-B" }} />
             </div>
             <div className="item-info-detail-row">
               <PreTextLabel text={"레어 등급 평가"} />
@@ -387,7 +324,7 @@ const ViewItem = () => {
       </div>
 
       <HorizontalRule type={"hr1"} />
-      
+
       {/* 상세 설명, 출품자 정보 */}
       <div className="info-grid">
 
@@ -407,15 +344,14 @@ const ViewItem = () => {
           <HorizontalRule type={"hr2"} />
           <div className="detail-row">
             <PreTextLabel text={"출품자"} />
-            <PreSubTitleLabel text={data.exhibitorNickName} style={{ fontWeight: "bold" }}/>
+            <PreSubTitleLabel text={data.exhibitorNickName} style={{ fontWeight: "bold" }} />
           </div>
           <div className="detail-row">
             <PreTextLabel text={"평점"} />
-            <PreSubTitleLabel text={`${data.exhibitorRate} 점`} style={{ fontWeight: "bold" }}/>
+            <PreSubTitleLabel text={`${data.exhibitorRate} 점`} style={{ fontWeight: "bold" }} />
           </div>
         </div>
       </div>
-
     </div>
   );
 };

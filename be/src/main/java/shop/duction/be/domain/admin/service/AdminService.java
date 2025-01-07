@@ -155,6 +155,8 @@ public class AdminService {
 
     switch (item.getAuctionStatus()) {
       case BIDDING_BEFORE:
+        break;
+
       case BIDDING_NOT:
         // 입찰 전, 낙찰 실패 -> 삭제
         itemRepository.deleteById(itemId);

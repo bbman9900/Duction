@@ -43,10 +43,10 @@ public class User {
     private String profileImage; // 프로필 사진
 
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     private String phone; // 휴대폰 번호
 
-    @Column(columnDefinition = "TEXT")
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String address; // 주소
 
     @Column(nullable = false)

@@ -21,37 +21,40 @@ import shop.duction.be.utils.HttpStatusConstants;
 public class UserController {
   private final UserService userService;
 
-  // 일단 하드 코딩
-  public Integer userId = 1;
-
   @GetMapping("/info")
   @Operation(summary = "내 정보 불러오기")
-  public MyInfoResponseDto getMyInfo() {
+  public MyInfoResponseDto getMyInfo(@RequestAttribute("userId") Integer userId) {
     return userService.getMyInfo(userId);
   }
 
   @PostMapping("/info/edit")
   @Operation(summary = "내 정보 수정하기")
-  public  ResponseEntity<String> editMyInfo(@RequestBody EditUserInfoRequestDto dto) {
+  public  ResponseEntity<String> editMyInfo(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody EditUserInfoRequestDto dto) {
     return userService.editMyInfo(dto, userId);
   }
 
   @GetMapping("/info/delete")
   @Operation(summary = "회원 탈퇴하기")
-  public  ResponseEntity<String> deleteUser() {
+  public  ResponseEntity<String> deleteUser(@RequestAttribute("userId") Integer userId) {
     return userService.deleteUser(userId);
   }
 
   @PostMapping("/rating")
   @Operation(summary = "출품자 평가하기")
-  public ResponseEntity<String> postRatingExhibitor(@RequestBody ExhibitorRatingRequestDto dto) {
+  public ResponseEntity<String> postRatingExhibitor(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody ExhibitorRatingRequestDto dto) {
     userService.postRatingExhibitor(dto, userId);
     return ResponseEntity.ok("출품자 평가 완료했습니다");
   }
 
   @PutMapping("/info/image")
   @Operation(summary = "프로필 사진 변경하기")
-  public  ResponseEntity<String> putUserProfileImage(@RequestBody ProfileImageEditRequestDTO dto) {
+  public  ResponseEntity<String> putUserProfileImage(
+          @RequestAttribute("userId") Integer userId,
+          @RequestBody ProfileImageEditRequestDTO dto) {
     try {
       String result = userService.updateUserProfileImage(userId, dto);
       return ResponseEntity.status(HttpStatusConstants.OK).body(result); // 200 OK 사용
@@ -64,7 +67,7 @@ public class UserController {
 
   @DeleteMapping("/info/image")
   @Operation(summary = "프로필 사진 삭제하기")
-  public  ResponseEntity<String> deleteUserProfileImage() {
+  public  ResponseEntity<String> deleteUserProfileImage(@RequestAttribute("userId") Integer userId) {
     try {
       String result = userService.deleteUserProfileImage(userId);
       return ResponseEntity.status(HttpStatusConstants.OK).body(result); // 200 OK 사용

@@ -1,6 +1,7 @@
-import '../styles/pages/RegistItem.css';
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { validateImageFile } from "../utils/ImageFileValidators";
+import { postItem } from '../services/itemService';
 import GodoTitleLabel from '../components/Labels/GodoTitleLabel';
 import PreTitleLabel from '../components/Labels/PreTitleLabel';
 import PreSubTitleLabel from '../components/Labels/PreSubTitleLabel';
@@ -8,16 +9,17 @@ import StarRating from '../components/Button/StarRating';
 import NumericInput from '../components/NumericInput';
 import RectangleButton from '../components/Button/RectangleButton';
 import Calendar from '../components/Calendar';
-import { validateImageFile } from "../utils/ImageFileValidators";
-import { postItem } from '../services/itemService';
 import HorizontalRule from '../components/HorizontalRule';
 import PreCaptionLabel from '../components/Labels/PreCaptionLabel';
-import PreTextLabel from '../components/Labels/PreTextLabel';
-import s3Upload from '../utils/S3Uploader';
+import RadioButtonGroup from "../components/RadioButtonGroup"
+
+import '../styles/pages/RegistItem.css';
 
 function RegistItem() {
+
   const navigate = useNavigate();
   const location = useLocation();
+  const communityId = location.state?.communityId;
 
   const [images, setImages] = useState([]); // 이미지 URL 상태
   const [imageFiles, setImageFiles] = useState([]); // 이미지 파일 상태
@@ -30,20 +32,12 @@ function RegistItem() {
   const [immediateBid, setImmediateBid] = useState(""); // 즉시 낙찰가
 
   const fileInputRef = useRef(null);
-
   const maxFileSize = 2 * 1024 * 1024; // 2MB
   const maxFileCount = 9; // 최대 파일 개수
 
-  const communityId = location.state?.communityId;
-
-  // 상품 상태 변경 관리
-  const handleConditionChange = (event) => {
-    setItemCondition(event.target.value);
-  };
-
   const handleImageClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click(); // 파일 선택 창 열기
+      fileInputRef.current.click();
     }
   };
 
@@ -53,7 +47,7 @@ function RegistItem() {
 
     // 이미지 파일 필터링 (유효성 검사)
     const validImages = Array.from(files).filter((file) =>
-      validateImageFile(file, maxFileSize) // 유틸리티 함수 호출
+      validateImageFile(file, maxFileSize)
     );
 
     // 총 이미지 개수가 9개를 초과하면 업로드 제한
@@ -71,7 +65,13 @@ function RegistItem() {
   };
 
   const handleRemoveImage = (index) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImages((prevImages) => {
+      const imageToRevoke = prevImages[index];
+      URL.revokeObjectURL(imageToRevoke)
+      return prevImages.filter((_, i) => i !== index)
+    })
+
+    setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== index)); 
   };
 
   const handleCancleClick = () => {
@@ -90,7 +90,7 @@ function RegistItem() {
       !auctionEndDate // 경매 종료일이 선택되지 않음
     ) {
       alert("필수 값을 입력해주세요.");
-      return; // 조건을 만족하지 않으면 함수 종료
+      return;
     }
 
     // 즉시 낙찰가가 시작가보다 낮은 경우 경고 표시
@@ -99,72 +99,29 @@ function RegistItem() {
       return;
     }
 
+    const formattedDate = new Date(auctionEndDate).toISOString();
     const formData = new FormData();
 
-    // 이미지 파일 추가
+    formData.append("name", itemName); 
+    formData.append("description", description);
+    formData.append("itemCondition", itemCondition);
+    formData.append("rareScore", rareScore);
+    formData.append("startingBid", startingBid);
+    formData.append("endTime", formattedDate);
+    formData.append("immediateBid", immediateBid || null);
+    formData.append("communityId", communityId);
+
     imageFiles.forEach((file) => {
-      formData.append("imageFiles", file);
+      formData.append("itemImages", file);
     });
 
-    // S3에 이미지 업로드 후 URL 반환
-    const addImageUrls = await s3Upload(imageFiles);
-
-    // DTO 생성
-    const dto = {
-      name: itemName,
-      itemImages: addImageUrls,
-      description: description,
-      itemCondition: itemCondition,
-      rareScore: rareScore,
-      startPrice: startingBid,
-      endTime: auctionEndDate,
-      immediatePrice: immediateBid ? immediateBid : null,
-      communityId: communityId,
-    };
-
     try {
-      const response = await postItem(dto);
-      console.log("성공적으로 등록되었습니다:", response);
-
+      const response = await postItem(formData);
       navigate("/viewItem", { state: { itemId: response } });
     } catch (error) {
-      console.error("상품 등록에 실패했습니다:", error);
       alert("상품 등록 중 문제가 발생했습니다.");
     }
   }
-
-  // 상품 상태 라디오 버튼 화면
-  const RadioButtonGroup = () => {
-    const radioOptions = [
-      { value: "NEW", label: "새 상품 (미사용)", description: "사용하지 않음 새 상품" },
-      { value: "NO_USE", label: "사용감 없음", description: "사용은 했지만 눈에 띄는 흔적 없음" },
-      { value: "LESS_USE", label: "사용감 적음", description: "눈에 띄는 흔적 있음" },
-      { value: "MANY_USE", label: "사용감 많음", description: "눈에 띄는 흔적 많음" },
-      { value: "BROKEN", label: "고장/파손 상품", description: "기능 손상으로 인해 수리/수선 필요" },
-    ];
-
-    return (
-      <div className="radio-button-group">
-        {radioOptions.map((option) => (
-          <div className="radio-item" key={option.value}>
-            <input
-              type="radio"
-              id={option.value}
-              name="itemCondition"
-              value={option.value}
-              checked={itemCondition === option.value} // 현재 상태와 비교
-              onChange={handleConditionChange} // 상태 변경 핸들러 사용
-            />
-            <label htmlFor={option.value}>
-              <div className="radio-label"><PreTextLabel text={option.label} /></div>
-              <div className="radio-description"><PreCaptionLabel text={option.description} /></div>
-            </label>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
 
   return (
     <div className="regist-item-container">
@@ -277,7 +234,10 @@ function RegistItem() {
       <div className="inline_container">
         <PreSubTitleLabel text={"상품 상태"} />
         <div className='inline_content'>
-          <RadioButtonGroup />
+          <RadioButtonGroup
+            selectedValue={itemCondition}
+            onChange={(value) => setItemCondition(value)}
+          />        
         </div>
       </div>
 

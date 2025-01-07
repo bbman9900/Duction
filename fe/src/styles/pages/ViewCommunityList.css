@@ -1,0 +1,42 @@
+.communityList_title {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.communityList_title_items {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.communityList_subTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.communityList_title_items div:hover,
+.communityList_title div:hover,
+.communityList_title_items.selected,
+.communityList_subTitle_item.selected {
+  text-decoration: underline;
+  font-weight: bold;
+  color: var(--gold-deep)
+}
+
+.communityList_all_conteinar {
+  display: flex;
+  gap: 80px;
+}
+
+.communityList_all_left{
+  display: flex;
+  align-items: center;
+}
+
+.communityList_all_right {
+}

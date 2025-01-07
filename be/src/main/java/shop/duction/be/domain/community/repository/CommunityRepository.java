@@ -17,6 +17,7 @@ public interface CommunityRepository extends JpaRepository<Community, Integer> {
             ORDER BY SUM(i.totalView) DESC
           """)
   List<PopularCommunitiesResponseDto> findPopularCommunitiesByViews();
+  List<Community> findAllByOrderByFirstWordAsc();
 }
 
 

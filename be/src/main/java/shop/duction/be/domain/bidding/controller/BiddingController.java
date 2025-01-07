@@ -13,18 +13,18 @@ import shop.duction.be.utils.HttpStatusConstants;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping("/api/items")
+@RequestMapping("/api/items/bdding")
 @RequiredArgsConstructor
 @Tag(name = "경매")
 public class BiddingController {
   private final BiddingService biddingService;
 
-  // 일단 하드 코딩
-  private Integer userId = 1;
-
   @PostMapping("/{itemId}/bidding")
   @Operation(summary = "입찰하기")
-  public ResponseEntity<?> postBidding(@PathVariable int itemId, @RequestBody BidRequestDTO dto) {
+  public ResponseEntity<?> postBidding(
+          @RequestAttribute("userId") Integer userId,
+          @PathVariable int itemId,
+          @RequestBody BidRequestDTO dto) {
     try {
       String result = biddingService.bidding(itemId, userId, dto);
       return ResponseEntity.status(HttpStatusConstants.OK).body(result); // 200 OK 사용
@@ -37,7 +37,7 @@ public class BiddingController {
 
   @PutMapping("/{itemId}/giveup")
   @Operation(summary = "입찰 포기")
-  public ResponseEntity<?> putBiddingGiveup(@PathVariable int itemId) {
+  public ResponseEntity<?> putBiddingGiveup(@RequestAttribute("userId") Integer userId, @PathVariable int itemId) {
     try {
       String result = biddingService.biddingGiveup(itemId, userId);
       return ResponseEntity.status(HttpStatusConstants.OK).body(result); // 200 OK 사용
@@ -50,7 +50,7 @@ public class BiddingController {
 
   @PostMapping("/{itemId}/immediatebidding")
   @Operation(summary = "즉시 낙찰")
-  public ResponseEntity<?> postImmediateBidding(@PathVariable int itemId) {
+  public ResponseEntity<?> postImmediateBidding(@RequestAttribute("userId") Integer userId, @PathVariable int itemId) {
     try {
       String result = biddingService.immediateBidding(itemId, userId);
       return ResponseEntity.status(HttpStatusConstants.OK).body(result); // 200 OK 사용

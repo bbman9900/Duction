@@ -7,6 +7,7 @@ import CustomModal from './Modal/CustomModal'
 import LoginModalContent from './Modal/LoginModalContent'
 
 import '@styles/components/HeaderFooter.css'
+import { checkLogin } from '../utils/CheckLogin'
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,6 +31,11 @@ export default function Header() {
     openModal(<LoginModalContent onClose={closeModal} />);
   };
 
+  const hendleLogout = () => {
+    localStorage.removeItem("jwt");
+    setIsLoggedIn(false);
+  }
+
   const handleSearch = (searchText) => {
     navigate('/viewSearchResult', { state: {searchText: searchText} })
   }
@@ -47,21 +53,17 @@ export default function Header() {
     },
     {
       icon: isLoggedIn
-        ? "/src/assets/login.png" 
-        : "/src/assets/logout.png", 
-      text: isLoggedIn ? "로그인" : "로그아웃", 
-      onClick: openLoginModal,
+        ? "/src/assets/logout.png" 
+        : "/src/assets/login.png", 
+      text: isLoggedIn ? "로그아웃" : "로그인", 
+      onClick: isLoggedIn ? hendleLogout : openLoginModal,
     },
   ];
 
-  // 토큰 확인
-  // 나중에 좀 변경해야할 수 있음 
   useEffect(() => {
-    // 토큰 체크 하고
-    const token = true 
-    // 설정 
-    setIsLoggedIn(token)
-  }, []);
+    const result = checkLogin();
+    setIsLoggedIn(result);
+  }, [isLoggedIn]);
 
   return(
     <div className='header_container'>

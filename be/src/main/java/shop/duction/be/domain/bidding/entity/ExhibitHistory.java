@@ -14,6 +14,7 @@ import shop.duction.be.domain.user.entity.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 public class ExhibitHistory {
 
     @Id
