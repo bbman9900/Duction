@@ -38,7 +38,7 @@ function ItemCard({ data }) {
   };
 
   const cardOnClick = () => {
-    navigate("/viewItem", { state: { itemId: itemId } });
+    navigate(`/viewItem/${itemId}`);
   };
 
   return (
