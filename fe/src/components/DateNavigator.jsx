@@ -33,11 +33,11 @@ export default function DateNavigator( {onDateChange} ) {
     <div>
       <div className='dateNavigator_container'>
         <button onClick={handlePreMonth}>
-          <img src='/src/assets/preMonth.png' />
+          <img src='/assets/preMonth.png' />
         </button>
         <PreTitleLabel text={`${currentDate.year}년 ${currentDate.month}월`} />        
         <button onClick={handleNextMonth}>
-        <img src='/src/assets/nextMonth.png' />
+        <img src='/assets/nextMonth.png' />
         </button>
       </div>
     </div>

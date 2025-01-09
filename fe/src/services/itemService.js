@@ -150,15 +150,13 @@ export async function postImmediateBidding(itemId) {
   }
 }
 
-// 상품 등록 
-export async function postItem(formData) {
+// 상품 등록 API 호출
+export async function postItem(dto) {
+  console.log("dto : ", dto);
+  // return true;
   try {
-    const response = await api.post("/items/regist", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data", 
-      },
-    });
-    return response.data; 
+    const response = await api.post("items", dto); // 서버에 POST 요청
+    return response.data; // 성공적으로 응답 데이터를 반환
   } catch (error) {
     console.error("상품 등록에 실패했습니다:", error);
     throw error; // 에러를 호출한 쪽으로 전달
@@ -169,27 +167,27 @@ export async function postItem(formData) {
 export async function getItemEdit(itemId) {
   console.log("itemId : ", itemId);
   try {
-    // const response = await api.get(`items/editing/${itemId}`); // 서버에 POST 요청
-    // return response.data; // 성공적으로 응답 데이터를 반환
-    const dto = {
-      itemName: "임시 이름",
-      images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_8Rj-vULPVGhf-eQyiY5sG2dMcHFQzD6RrQ&s", 
-                "https://m.jncompany.shop/web/product/big/202302/55da73b5645922de32ffa07cf315ee64.jpg", 
-                "https://sitem.ssgcdn.com/87/70/47/item/1000026477087_i1_750.jpg",
-                "https://wimg.heraldcorp.com/content/default/2015/03/06/20150306001045_0.jpg",
-                "https://www.cheonyu.com/_DATA/product/63900/63992_1672648178.jpg",
-                "https://i.pinimg.com/736x/b5/9d/8f/b59d8f8cbb54368862109db8324dc6b8.jpg",
-                "https://i.pinimg.com/736x/7a/64/d1/7a64d16d82e1bc56a6607d4a7f13625b.jpg",
-                "https://mblogthumb-phinf.pstatic.net/MjAxODA0MDlfMTUy/MDAxNTIzMjQwNjYxMDcw.NUntdy9kjN5iiUuneXi71eg74XEAtAJ40QOGb1LhOewg.UyZCO_3r6zQUwbDJ9n5FXuX-yalD0bMAHFiy9v8NN1Mg.PNG.lifesaverclinic/%EC%A7%B1%EA%B5%AC-%EC%BB%B4%ED%93%A8%ED%84%B0-%EB%B0%B0%EA%B2%BD%ED%99%94%EB%A9%B46.png?type=w800",
-                "https://i.namu.wiki/i/G0dztHXufsO8bQs8dySSWVQplZXjOJ1mVhjbzHFGFgO7PXxMM-yt7wV9tNm9YVoLV-jnhK5l3JORzRMUkNN9Mw.webp",],
-      description: "상품 설명",
-      itemCondition: "NO_USE",
-      rareScore: 3.5,
-      startingBid: 10000,
-      auctionEndDate: "2023-12-31T23:59:59",
-      immediateBid: 20000,
-    };
-    return dto;
+    const response = await api.get(`items/editing/${itemId}`); // 서버에 POST 요청
+    return response.data; // 성공적으로 응답 데이터를 반환
+    // const dto = {
+    //   itemName: "임시 이름",
+    //   images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_8Rj-vULPVGhf-eQyiY5sG2dMcHFQzD6RrQ&s", 
+    //             "https://m.jncompany.shop/web/product/big/202302/55da73b5645922de32ffa07cf315ee64.jpg", 
+    //             "https://sitem.ssgcdn.com/87/70/47/item/1000026477087_i1_750.jpg",
+    //             "https://wimg.heraldcorp.com/content/default/2015/03/06/20150306001045_0.jpg",
+    //             "https://www.cheonyu.com/_DATA/product/63900/63992_1672648178.jpg",
+    //             "https://i.pinimg.com/736x/b5/9d/8f/b59d8f8cbb54368862109db8324dc6b8.jpg",
+    //             "https://i.pinimg.com/736x/7a/64/d1/7a64d16d82e1bc56a6607d4a7f13625b.jpg",
+    //             "https://mblogthumb-phinf.pstatic.net/MjAxODA0MDlfMTUy/MDAxNTIzMjQwNjYxMDcw.NUntdy9kjN5iiUuneXi71eg74XEAtAJ40QOGb1LhOewg.UyZCO_3r6zQUwbDJ9n5FXuX-yalD0bMAHFiy9v8NN1Mg.PNG.lifesaverclinic/%EC%A7%B1%EA%B5%AC-%EC%BB%B4%ED%93%A8%ED%84%B0-%EB%B0%B0%EA%B2%BD%ED%99%94%EB%A9%B46.png?type=w800",
+    //             "https://i.namu.wiki/i/G0dztHXufsO8bQs8dySSWVQplZXjOJ1mVhjbzHFGFgO7PXxMM-yt7wV9tNm9YVoLV-jnhK5l3JORzRMUkNN9Mw.webp",],
+    //   description: "상품 설명",
+    //   itemCondition: "NO_USE",
+    //   rareScore: 3.5,
+    //   startingBid: 10000,
+    //   auctionEndDate: "2023-12-31T23:59:59",
+    //   immediateBid: 20000,
+    // };
+    // return dto;
   } catch (error) {
     console.error("상품 등록에 실패했습니다:", error);
     throw error; // 에러를 호출한 쪽으로 전달
@@ -197,19 +195,19 @@ export async function getItemEdit(itemId) {
 }
 
 // 상품 수정 API 호출
-export async function putItemEdit(dto) {
+export async function putItemEdit(itemId, dto) {
   try {
-    // const response = await api.put(`items/editing/${itemId}`, dto); // 서버에 PUT 요청
-    // return response.data; // 성공적으로 응답 데이터를 반환
-    console.log("dto : ", dto);
-    return dto;
+    const response = await api.put(`items/editing/${itemId}`, dto); // 서버에 PUT 요청
+    return response.data; // 성공적으로 응답 데이터를 반환
+    // console.log("dto : ", dto);
+    // return dto;
   } catch (error) {
     console.error("상품 등록에 실패했습니다:", error);
     throw error; // 에러를 호출한 쪽으로 전달
   }
 }
 
-// 통합 검색 페이지 - 출품 상품 검색 결과
+// 통합 검색 페이지 - 출품 상품 검색 결 과
 export async function getItemSearchResults(searchText) {
   try {
     // const response = await api.get(`/items/result/list/${searchText}`);

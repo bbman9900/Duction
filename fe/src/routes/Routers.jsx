@@ -26,7 +26,7 @@ export default function Routers() {
       <Route path='/viewItemList' element={<ViewItemList />} />
       <Route path="/viewCommunityList" element={<ViewCommunityList />} />
       <Route path='/viewSearchResult' element={<ViewSearchResult />} />
-      <Route path='/viewItem' element={<ViewItem />} />
+      <Route path='/viewItem/:itemId' element={<ViewItem />} />
 
       <Route element={<PrivateRoute />}>
         <Route path="/viewMyInfo" element={<ViewMyInfo />} />
@@ -36,7 +36,7 @@ export default function Routers() {
         <Route path='/viewExhibitHistoryList' element={<ViewExhibitHistoryList/>} />
         <Route path='/viewBiddingHistoryList' element={<ViewBiddingHistoryList/>} />
         <Route path="/registItem" element={<RegistItem />} />
-        <Route path="/editItem" element={<EditItem />} />
+        <Route path="/editItem/:itemId" element={<EditItem />} />
         <Route path="/viewAdminPage" element={<ViewAdminPage />} />
         <Route path="/viewMyInfo" element={<ViewMyInfo />} />
         <Route path='/viewBidPointHistoryList' element={<ViewBidPointHistoryList />} />

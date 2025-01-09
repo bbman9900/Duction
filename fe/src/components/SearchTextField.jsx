@@ -25,7 +25,7 @@ export default function SearchTextField({ placeholder, onSearch }) {
         onKeyDown={handleEnterKey}
       />
       <button onClick={handleSearch} className='searchTextField_button'>
-        <img src='/src/assets/search.png'/>
+        <img src='/assets/search.png'/>
       </button>
     </div>
   )

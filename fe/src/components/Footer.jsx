@@ -17,8 +17,8 @@ export default function Footer() {
         <PreCaptionLabel text={'Duck-Family @ 2024-2025. All rights reserved.'} />
       </div>
       <div className='footer_container_links'>
-        <IconPlusLabel icon={'/src/assets/gitLogo.png'} onClick={()=>openWeb('https://github.com/bbman9900/Ducktion')}/>
-        <IconPlusLabel icon={'/src/assets/notion.png'} onClick={()=>openWeb('https://www.notion.so/154bc0f6983880f0b6b9f88e3fe2ec8d')} />
+        <IconPlusLabel icon={'/assets/gitLogo.png'} onClick={()=>openWeb('https://github.com/bbman9900/Ducktion')}/>
+        <IconPlusLabel icon={'/assets/notion.png'} onClick={()=>openWeb('https://www.notion.so/154bc0f6983880f0b6b9f88e3fe2ec8d')} />
       </div>
     </div>
   )

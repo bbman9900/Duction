@@ -122,17 +122,17 @@ export default function ViewMypage() {
       <div className='rate_container'>
         <div className='rate_items'>
           <div className='rate_item'>
-            <IconPlusLabelColumn icon={"src/assets/rate.png"} text={"내 점수"} />
+            <IconPlusLabelColumn icon={"assets/rate.png"} text={"내 점수"} />
             <PreSubTitleLabel text={`${userInfo.rate} 점`} />
           </div>
           <hr />
           <div className='rate_item' onClick={navigateBidPointHistoryList}>
-            <IconPlusLabelColumn icon={"src/assets/heldBid.png"} text={"보유 비드"} />
+            <IconPlusLabelColumn icon={"assets/heldBid.png"} text={"보유 비드"} />
             <PreSubTitleLabel text={`${userInfo.heldBid} 비드`} />
           </div>
           <hr />
           <div className='rate_item' onClick={navigateBidPointHistoryList}>
-            <IconPlusLabelColumn icon={"src/assets/usableBiid.png"} text={"사용 가능 비드"} />
+            <IconPlusLabelColumn icon={"assets/usableBiid.png"} text={"사용 가능 비드"} />
             <PreSubTitleLabel text={`${userInfo.usableBid} 비드`} />
           </div>
         </div>

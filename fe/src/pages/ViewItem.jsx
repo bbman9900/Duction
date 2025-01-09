@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useModal } from '../hooks/useModal'
 import { getItemDetails, postItemRareScore, putBiddingGiveup, putReport, postImmediateBidding } from '../services/itemService';
 import HorizontalRule from '../components/HorizontalRule';
@@ -18,8 +18,9 @@ import "../styles/pages/ViewItem.css"
 
 const ViewItem = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const itemId = location.state.itemId;
+  // const location = useLocation();
+  // const itemId = location.state.itemId;
+  const { itemId } = useParams();
   const [data, setData] = useState('');
   const [images, setImages] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // 현재 보여지는 이미지 인덱스
@@ -29,16 +30,18 @@ const ViewItem = () => {
   const [isReported, setIsReported] = useState(false); // 레어 점수 (별점)
   const { isModalOpen, modalContent, openModal, closeModal } = useModal();
 
-  async function fetchItemDetails() {
-    try {
-      const response = await getItemDetails(itemId);
-      setData(response);
-    } catch (error) {
-      alert("아이템 정보를 불러오는 데 실패했습니다");
-    }
-  }
 
   useEffect(() => {
+    const fetchItemDetails = async () => {
+      try {
+        const response = await getItemDetails(itemId);
+        setData(response);
+        setImages(response.images);
+        console.log(response.images);
+      } catch (error) {
+        alert("아이템 정보를 불러오는 데 실패했습니다");
+      }
+    }
     if (!itemId) {
       console.error("itemId가 전달되지 않았습니다.");
       return;
@@ -231,7 +234,7 @@ const ViewItem = () => {
           <div className="image-slider">
             <button className="arrow left-arrow" onClick={handlePrevClick}>
               {/* 왼쪽 화살표 */}
-              <img src="/src/assets/left_arrow.png" alt="left_arrow" />
+              <img src="/assets/left_arrow.png" alt="left_arrow" />
             </button>
             <div className="image-wrapper">
               {/* 메인 이미지 */}
@@ -243,7 +246,7 @@ const ViewItem = () => {
             </div>
             <button className="arrow right-arrow" onClick={handleNextClick}>
               {/* 오른쪽 화살표 */}
-              <img src="/src/assets/right_arrow.png" alt="right_arrow" />
+              <img src="/assets/right_arrow.png" alt="right_arrow" />
             </button>
 
             {/* 썸네일 리스트 */}
@@ -273,9 +276,9 @@ const ViewItem = () => {
 
           {/* 버튼 추가 */}
           <div className="slider-buttons">
-            <IconPlusLabel icon="/src/assets/report.png" text={"신고하기"} onImageClick={onReport} onTextClick={onReport} />
-            <IconPlusLabel icon="/src/assets/give_up.png" text={"입찰포기"} onImageClick={onGiveup} onTextClick={onGiveup} />
-            <IconPlusLabel icon="/src/assets/duck.png" text={"관심등록"} onImageClick={onGiveup} onTextClick={onGiveup} />
+            <IconPlusLabel icon="/assets/report.png" text={"신고하기"} onImageClick={onReport} onTextClick={onReport} />
+            <IconPlusLabel icon="/assets/give_up.png" text={"입찰포기"} onImageClick={onGiveup} onTextClick={onGiveup} />
+            <IconPlusLabel icon="/assets/duck.png" text={"관심등록"} onImageClick={onGiveup} onTextClick={onGiveup} />
           </div>
         </div>
 

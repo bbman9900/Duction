@@ -1,6 +1,6 @@
 import '../styles/pages/RegistItem.css';
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import GodoTitleLabel from '../components/Labels/GodoTitleLabel';
 import PreTitleLabel from '../components/Labels/PreTitleLabel';
 import PreSubTitleLabel from '../components/Labels/PreSubTitleLabel';
@@ -12,13 +12,14 @@ import { validateImageFile } from "../utils/ImageFileValidators";
 import { putItemEdit, getItemEdit } from '../services/itemService';
 import HorizontalRule from '../components/HorizontalRule';
 import PreCaptionLabel from '../components/Labels/PreCaptionLabel';
+import s3Upload from '../utils/S3Uploader';
 
 function EditItem() {
   const navigate = useNavigate();
+  const { itemId } = useParams();
 
   const [images, setImages] = useState([]); // 기존 이미지 S3 URL들의 상태
   const [newImageFiles, setNewImageFiles] = useState([]); // 추가된 새 이미지 파일들의 파일 상태
-  const [newImages, setNewImages] = useState([]); // 추가된 새 이미지들의 URL 상태
   const [removeImages, setRemoveImages] = useState([]); // 삭제할 기존 이미지 S3 URL 상태
   const [itemName, setItemName] = useState(""); // 상품 이름 상태
   const [description, setDescription] = useState(""); // 상세 설명 상태
@@ -39,7 +40,7 @@ function EditItem() {
     const fetchData = async () => {
       try {
         // api 수정할 상품 정보 호출
-        const data = await getItemEdit(1);
+        const data = await getItemEdit(itemId);
         console.log(data);
 
         // 상품 데이터를 상태에 업데이트
@@ -47,13 +48,13 @@ function EditItem() {
         setDescription(data.description || "");
         setItemCondition(data.itemCondition || "");
         setRareScore(data.rareScore || 0);
-        setStartingBid(data.startingBid || "");
-        setAuctionEndDate(data.auctionEndDate || null);
-        setImmediateBid(data.immediateBid || "");
+        setStartingBid(data.startPrice || "");
+        setAuctionEndDate(data.endTime || null);
+        setImmediateBid(data.immediatePrice || "");
 
         // 이미지 배열 업데이트
-        if (data.images && Array.isArray(data.images)) {
-          setImages(data.images); // 초기 이미지 URL 설정
+        if (data.imageUrls && Array.isArray(data.imageUrls)) {
+          setImages(data.imageUrls); // 초기 이미지 URL 설정
         }
 
       } catch (error) {
@@ -141,10 +142,16 @@ function EditItem() {
       // 즉시 낙찰가가 시작가보다 낮은 경우 경고 표시
       if (immediateBid && Number(immediateBid) < Number(startingBid)) {
         alert("즉시 낙찰가는 시작가보다 낮게 입력할 수 없습니다.");
-        return;
+        return;``
       }
 
-      // 1. 기존 이미지 삭제 요청
+      
+
+      // 1. 새 이미지 파일 업로드
+      // S3에 이미지 업로드 후 URL 반환
+      const addImageUrls = await s3Upload(newImageFiles);
+
+      // 2. 기존 이미지 삭제 요청
       if (removeImages.length > 0) {
         // await Promise.all(removeImages.map((url) => deleteImage(url))); // 서버 요청 병렬 처리
         // 서버에서 할 일
@@ -153,31 +160,27 @@ function EditItem() {
         console.log("삭제된 이미지:", removeImages);
       }
 
-      // 2. 새 이미지 파일 업로드
-      const formData = new FormData();
-      newImageFiles.forEach((file) => {
-        formData.append("imageFiles", file);
-      });
       // 서버 업로드 API 로직 추가 필요
       // 3. 새 이미지의 S3 URL을  추가
 
       // DTO 생성
       const dto = {
         itemName,
-        images, // 이미지 URL 배열
+        addImageUrls,
+        removeImageUrls: removeImages,
         description,
         itemCondition,
         rareScore,
-        startingBid,
-        auctionEndDate,
-        immediateBid,
+        startPrice: startingBid,
+        endTime: auctionEndDate,
+        immediatePrice: immediateBid,
       };
       // API POST 요청
-      const response = await putItemEdit(dto);
+      const response = await putItemEdit(itemId, dto);
       console.log("성공적으로 등록되었습니다:", response.data);
 
       // 성공적으로 등록 후 페이지 이동
-      navigate("/viewItem");
+      navigate(`/viewItem/${itemId}`);
     } catch (error) {
       console.error("상품 등록에 실패했습니다:", error);
       alert("상품 등록 중 문제가 발생했습니다.");
@@ -254,7 +257,7 @@ function EditItem() {
             {/* 이미지 등록 버튼 */}
             <div className="image-upload-wrapper" onClick={handleImageClick}>
               <div className="upload-icon">
-                <img src="/src/assets/camera.png" alt="카메라 아이콘" />
+                <img src="/assets/camera.png" alt="카메라 아이콘" />
                 <div>이미지 등록</div>
               </div>
             </div>

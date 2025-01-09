@@ -42,19 +42,19 @@ export default function Header() {
  
   const options = [
     {
-      icon: "/src/assets/community.png",
+      icon: "/assets/community.png",
       text: "커뮤니티", 
       onClick: navigateToCommunityList,
     }, 
     {
-      icon: "/src/assets/mypage.png",
+      icon: "/assets/mypage.png",
       text: "마이페이지",
       onClick: navigateToMyPage,
     },
     {
       icon: isLoggedIn
-        ? "/src/assets/logout.png" 
-        : "/src/assets/login.png", 
+        ? "/assets/logout.png" 
+        : "/assets/login.png", 
       text: isLoggedIn ? "로그아웃" : "로그인", 
       onClick: isLoggedIn ? hendleLogout : openLoginModal,
     },
@@ -69,7 +69,7 @@ export default function Header() {
     <div className='header_container'>
       <CustomModal isOpen={isModalOpen} onClose={closeModal} content={modalContent} />
       <div className='loginModal_container_top'>
-        <img src="/src/assets/ducktion_logo.png" onClick={navigateToHome}/>
+        <img src="/assets/ducktion_logo.png" onClick={navigateToHome}/>
       </div>
       <div className='header_container_searchField'>
         <SearchTextField placeholder={'커뮤니티 이름, 상품 이름을 입력해 주세요'} onSearch={(searchText) => handleSearch(searchText)} />

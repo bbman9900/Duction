@@ -104,7 +104,7 @@ export default function ViewCommunityList() {
             setSelectedChar('전체'); 
           }}
         >
-          <img src="/src/assets/duck_selected.png" width={20} height={20} alt="My Icon" />
+          <img src="/assets/duck_selected.png" width={20} height={20} alt="My Icon" />
           <GodoTitleLabel text="MY" />
         </div>
       </div>

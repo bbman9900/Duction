@@ -13,7 +13,7 @@ public class CloudFrontUrlGenerator {
 
   public String generateCloudFrontUrl(String objectKey) {
     // CloudFront URL 생성
-    String url = "https://" + cloudFrontDomain + "/" + objectKey;
+    String url = cloudFrontDomain + objectKey;
 
     // 로깅
     log.info("Generated CloudFront URL: {}", url);

@@ -37,7 +37,7 @@ const StarRating = ({ rating, onChange }) => {
     if (isFullStar) {
       return (
         <img
-          src="/src/assets/full_star.png"
+          src="/assets/full_star.png"
           alt="Full Star"
           className="star"
           key={index}
@@ -48,7 +48,7 @@ const StarRating = ({ rating, onChange }) => {
     } else if (isHalfStar) {
       return (
         <img
-          src="/src/assets/half_star.png"
+          src="/assets/half_star.png"
           alt="Half Star"
           className="star"
           key={index}
@@ -59,7 +59,7 @@ const StarRating = ({ rating, onChange }) => {
     } else {
       return (
         <img
-          src="/src/assets/empty_star.png"
+          src="/assets/empty_star.png"
           alt="Empty Star"
           className="star"
           key={index}

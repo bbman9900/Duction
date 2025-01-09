@@ -70,7 +70,7 @@ export default function Home() {
           <div class='home_main_text'>수집가를 위한 경매 커뮤니티</div>
           <div class='home_main_text2'>덕션 (폰트 바꿔야?)</div>
         </div>
-        <img src='/src/assets/home_main.png' alt='home image' />
+        <img src='/assets/home_main.png' alt='home image' />
       </div>
 
       <div className='home_popularCommunitie'>

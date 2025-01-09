@@ -43,6 +43,7 @@ import shop.duction.be.domain.item.enums.RareTier;
 import shop.duction.be.domain.item.repository.FavoriteItemRepository;
 import shop.duction.be.utils.*;
 import shop.duction.be.utils.aws.CloudFrontUrlGenerator;
+import shop.duction.be.utils.aws.S3Controller;
 
 @Service
 @Transactional
@@ -59,6 +60,7 @@ public class ItemService {
   private final ExhibitHistoryRepository exhibitHistoryRepository;
   private final BidHistoryRepository bidHisotryRepository;
   private final CloudFrontUrlGenerator cloudFrontUrlGenerator;
+  private final S3Controller s3Controller;
 
   public ViewItemEditResponseDTO readItemEdit(int itemId) {
     Item item = itemRepository.findById(itemId)
@@ -89,6 +91,7 @@ public class ItemService {
   public String updateItem(int itemId, EditItemRequestDTO dto) {
     Item item = itemRepository.findById(itemId)
             .orElseThrow(() -> new ItemNotFoundException("Item with ID " + itemId + " not found"));
+
     item.setName(dto.itemName());
     item.setDescription(dto.description());
     item.setItemCondition(dto.itemCondition());
@@ -97,13 +100,17 @@ public class ItemService {
     item.setEndBidTime(dto.endTime());
     item.setImmediatePrice(dto.immediatePrice());
 
-    // 이미지 수정
-    List<ItemImage> itemImages = item.getItemImages();
-
     // 삭제 요청 처리
     if (dto.removeImageUrls() != null && !dto.removeImageUrls().isEmpty()) {
       // 기존 ItemImage 리스트에서 삭제할 URL 제거
-      itemImages.removeIf(image -> dto.removeImageUrls().contains(image.getUrl()));
+      try {
+        for (String removeUrl : dto.removeImageUrls()) {
+          s3Controller.deleteFile(removeUrl);
+          itemImageRepository.deleteByUrl(removeUrl);
+        }
+      } catch (Exception e) {
+        log.info("이미지 삭제 에러");
+      }
     }
 
     // 추가 요청 처리
@@ -114,11 +121,10 @@ public class ItemService {
                 .url(imageUrl)
                 .item(item)
                 .build();
-        itemImages.add(newImage);
+        ItemImage saved = itemImageRepository.save(newImage);
+        item.addItemImage(saved);
       }
     }
-
-    item.setItemImages(itemImages);
     itemRepository.save(item);
 
     return "Item with ID " + itemId + " has been updated successfully!";
@@ -178,69 +184,6 @@ public class ItemService {
     List<Integer> ids = items.stream().map(Item::getItemId).toList();
     return favoriteItemRepository.findeFavoriteItemsByUserAndItemIds(userId, ids);
   }
-
-//  public Integer createItem(int userId, RegistItemRequestDTO dto, List<String > fileUrls) {
-//    Community community = communityRepository.findById(dto.getCommunityId()).get();
-//    User user = userRepository.findById(userId)
-//            .orElseThrow(() -> new ItemNotFoundException("User with ID " + userId + " not found"));
-//
-//    // 레어 등급 판정
-//    RareTier rareTier = RareTierCheckUtils.rareCheck(dto.getRareScore());
-//
-//    ItemCondition itemCondition = ItemCondition.fromString(dto.getItemCondition());
-//
-//    // 출품 상품 등록
-//    Item item = new Item();
-//    item.setName(dto.getName());
-//    item.setStartPrice(dto.getStartingBid());
-//    item.setImmediatePrice(dto.getImmediateBid());
-//    item.setEndTime(dto.getEndTime());
-//    item.setDescription(dto.getDescription());
-//    item.setAuctionStatus(AuctionStatus.BIDDING_BEFORE);
-//    item.setItemCondition(itemCondition);
-//    item.setRareScore(dto.getRareScore());
-//    item.setRareTier(rareTier);
-//    item.setIsModified(false);
-//    item.setIsChecked(false);
-//    item.setReportedCount(0);
-//    item.setRegistTime(LocalDateTime.now());
-//    item.setEndBidTime(null);
-//    item.setTotalView(0);
-//    item.setTotalBidding(0);
-//    item.setCommunity(community);
-//    item.setUser(user);
-//
-//    Item savedItem = itemRepository.save(item);
-//
-//    for (String imageUrl : fileUrls) {
-//      ItemImage itemImage = new ItemImage();
-//      itemImage.setUrl(imageUrl);
-//      itemImage.setItem(savedItem);
-//      savedItem.addItemImage(itemImage);
-//    }
-//
-//    Item savedItem2 = itemRepository.save(savedItem);
-//
-//    // 최초 레어 등급 평가
-//    UserItemKey userItemKey = new UserItemKey(user.getUserId(), savedItem2.getItemId());
-//
-//    RareRating rareRating = RareRating.builder()
-//            .id(userItemKey)
-//            .user(user)
-//            .item(savedItem2)
-//            .rareScore(dto.getRareScore())
-//            .build();
-//    rareRatingRepository.save(rareRating);
-//
-//    ExhibitHistory exhibitHistory = new ExhibitHistory();
-//    exhibitHistory.setRegistTime(LocalDateTime.now());
-//    exhibitHistory.setItem(savedItem2);
-//    exhibitHistory.setStatus(ExhibitStatus.BIDDING_UNDER);
-//    exhibitHistory.setUser(user);
-//    exhibitHistoryRepository.save(exhibitHistory);
-//
-//    return savedItem2.getItemId();
-//  }
 
   public Integer createItem(int userId, RegistItemRequestDTO dto) {
     Community community = communityRepository.findById(dto.communityId()).get();

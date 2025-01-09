@@ -91,7 +91,7 @@ export default function SubmitBidModalContent({ probs, onClose }) {
       
       <div className='bidInput_container'>
         <button className='bidInput_button' onClick={handleMinusIcon}>
-        <img src="/src/assets/minus.png" width={20} height={20}/>
+        <img src="/assets/minus.png" width={20} height={20}/>
         </button>
         <input
           type='text'
@@ -101,7 +101,7 @@ export default function SubmitBidModalContent({ probs, onClose }) {
           disabled={true}
         />
         <button className='bidInput_button' onClick={handlePlusIcon}>
-          <img src="/src/assets/plus.png" width={20} height={20}/>
+          <img src="/assets/plus.png" width={20} height={20}/>
         </button>
       </div>
 

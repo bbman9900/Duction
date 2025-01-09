@@ -53,7 +53,7 @@ function ItemCard({ data }) {
           handleCheckLogin();
         }}>
           <img
-            src={isFavorited ? 'src/assets/duck_selected.png' : 'src/assets/duck.png'}
+            src={isFavorited ? '/assets/duck_selected.png' : '/assets/duck.png'}
             alt='Badge'
             className='itemCard_imageContainer_badgeImage'
           />

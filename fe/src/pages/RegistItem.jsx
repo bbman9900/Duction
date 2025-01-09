@@ -12,6 +12,7 @@ import Calendar from '../components/Calendar';
 import HorizontalRule from '../components/HorizontalRule';
 import PreCaptionLabel from '../components/Labels/PreCaptionLabel';
 import RadioButtonGroup from "../components/RadioButtonGroup"
+import s3Upload from '../utils/S3Uploader';
 
 import '../styles/pages/RegistItem.css';
 
@@ -76,7 +77,7 @@ function RegistItem() {
 
   const handleCancleClick = () => {
     window.history.back();
-  }
+  };
 
   const handleSubmitClick = async () => {
     // 필수 값 체크
@@ -90,7 +91,7 @@ function RegistItem() {
       !auctionEndDate // 경매 종료일이 선택되지 않음
     ) {
       alert("필수 값을 입력해주세요.");
-      return;
+      return; // 조건을 만족하지 않으면 함수 종료
     }
 
     // 즉시 낙찰가가 시작가보다 낮은 경우 경고 표시
@@ -99,29 +100,32 @@ function RegistItem() {
       return;
     }
 
-    const formattedDate = new Date(auctionEndDate).toISOString();
-    const formData = new FormData();
+    // S3에 이미지 업로드 후 URL 반환
+    const addImageUrls = await s3Upload(imageFiles);
 
-    formData.append("name", itemName); 
-    formData.append("description", description);
-    formData.append("itemCondition", itemCondition);
-    formData.append("rareScore", rareScore);
-    formData.append("startingBid", startingBid);
-    formData.append("endTime", formattedDate);
-    formData.append("immediateBid", immediateBid || null);
-    formData.append("communityId", communityId);
-
-    imageFiles.forEach((file) => {
-      formData.append("itemImages", file);
-    });
+    // DTO 생성
+    const dto = {
+      name: itemName,
+      description: description,
+      itemCondition: itemCondition,
+      rareScore: rareScore,
+      startingBid: startingBid,
+      endTime: auctionEndDate,
+      immediateBid: immediateBid ? immediateBid : null,
+      communityId: communityId,
+      itemImages: addImageUrls,
+    };
 
     try {
-      const response = await postItem(formData);
-      navigate("/viewItem", { state: { itemId: response } });
+      const response = await postItem(dto);
+      console.log("성공적으로 등록되었습니다:", response);
+
+      navigate(`/viewItem/${response}`);
     } catch (error) {
+      console.error("상품 등록에 실패했습니다:", error);
       alert("상품 등록 중 문제가 발생했습니다.");
     }
-  }
+  };
 
   return (
     <div className="regist-item-container">
@@ -160,7 +164,7 @@ function RegistItem() {
             {/* 이미지 등록 버튼 */}
             <div className="image-upload-wrapper" onClick={handleImageClick}>
               <div className="upload-icon">
-                <img src="/src/assets/camera.png" alt="카메라 아이콘" />
+                <img src="/assets/camera.png" alt="카메라 아이콘" />
                 <div>이미지 등록</div>
               </div>
             </div>

@@ -121,10 +121,5 @@ public class Item {
         this.itemImages.add(itemImage);
         itemImage.setItem(this);
     }
-
-    public void removeItemImage(ItemImage itemImage) {
-        itemImages.remove(itemImage);
-        itemImage.setItem(null);
-    }
 }
 

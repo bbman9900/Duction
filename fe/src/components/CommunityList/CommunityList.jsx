@@ -58,8 +58,8 @@ export default function CommunityList({ title, communityList }) {
                 text={item.name}
                 icon={
                   item.favorite
-                    ? '/src/assets/duck_selected.png'
-                    : '/src/assets/duck.png'
+                    ? '/assets/duck_selected.png'
+                    : '/assets/duck.png'
                 }
                 onImageClick={() => handleCheckLogin(item.communityId, item.favorite)}
                 onTextClick={() => navigateToItemList(item.communityId, item.name)}
